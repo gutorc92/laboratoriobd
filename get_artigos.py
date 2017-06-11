@@ -2,6 +2,7 @@
 from bs4 import BeautifulSoup
 from bs4.element import NavigableString
 import re
+from myPyArango import saveDocument
 
 fn = open('./DEL2848compilado.html', 'r')
 text = fn.read()
@@ -21,5 +22,6 @@ for p in ps:
             #print("Achou",t)           
         m = re.search('(§ \d+)º\s+-\s+(.*)',t)
         if(m is not None):
-            print(m.group(1))  
-            print(m.group(2))  
+            print("artigo", m.group(1))  
+            print("texto:",  m.group(2))  
+            saveDocument(m.group(2), m.group(1))
