@@ -38,12 +38,26 @@ def getLeis():
         return db["Leis"]
     return None
 
+def getEdges():
+    db = getdb()
+    if db.hasCollection("Relacao"):
+        return db["Relacao"]
+    return None
+
+def createRelacao(doc1, doc2, tipoRelacao):
+    r = Relacao(getdb(), {})
+    rel = r.createEdge()
+    rel.links(doc1,doc2)
+    rel["tipo"] = tipoRelacao
+    rel.save()
+
 def saveDocument(texto, identificador):
     i = getLeis()
     q = i.createDocument()
     q["identificador"] = identificador
     q["texto"] = texto
     q.save()
+    return q
 
 def main():
    db = getdb()
