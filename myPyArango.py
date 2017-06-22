@@ -45,6 +45,16 @@ def saveDocument(texto, identificador):
     q["texto"] = texto
     q.save()
 
+def saveGraph(doc, texto, identificador):
+    i = getLeis()
+    q = i.createDocument()
+    q["identificador"] = identificador
+    q["texto"] = texto
+    q.save()
+    g = getGraph()
+    g.link('Relacao', doc, q, ls, {"tipo" : "Paragrafo"})
+
+
 def main():
    db = getdb()
    db.createCollection("Leis")
