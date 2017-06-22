@@ -25,13 +25,17 @@ def main():
             m = re.search('(Art\.\s+\d+\w{1})\s+-*(.*)', t) 
             if(m is not None):
                 arg_pass = m.group(1)
-                print(m.group(1))
-                print(m.group(2))
+                print("Artigo:", m.group(1))
+                print("Texto:", m.group(2))
                 #print("Achou",t)           
             m = re.search('(§ \d+)º\s+-\s+(.*)',t)
             if(m is not None):
-                print("artigo", m.group(1))  
+                print("Paragrafo:", m.group(1))  
                 print("texto:",  m.group(2))  
+            m = re.search('(I|II)\s+\u2013\s+(.*)',t)
+            if(m is not None):
+                print("Alinea:", m.group(1))  
+                print("texto:",  m.group(2)) 
 
 
 if __name__ == "__main__":
