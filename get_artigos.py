@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 from bs4.element import NavigableString
 import re
 import sys
+import os
 
 def main():
     if len(sys.argv) < 3:
@@ -10,33 +11,75 @@ def main():
         return None
     file_name = sys.argv[1]
     encoding = sys.argv[2]
+    teste = sys.argv[3]
     print(file_name)
-    fn = open(file_name, 'r', encoding=encoding)
-    text = fn.read()
+    text = read_input(file_name, encoding)
+    if teste:
+        fn1 = open_output(file_name, encoding)
     soup = BeautifulSoup(text, 'html.parser')
     ps = soup.find_all('p')
+    print("Quantos ps foram encontrados: ", len(ps))
     for p in ps:
         #print(type(p), p)
         t = p.text
         if t:
             t = str(t)
+            t = t.strip()
             #print("Linha: ", t)
             t = t.replace("\n", " ")
-            m = re.search('(Art\.\s+\d+\w{1})\s+-*(.*)', t) 
-            if(m is not None):
-                arg_pass = m.group(1)
-                print("Artigo:", m.group(1))
-                print("Texto:", m.group(2))
-                #print("Achou",t)           
-            m = re.search('(§ \d+)º\s+-\s+(.*)',t)
-            if(m is not None):
-                print("Paragrafo:", m.group(1))  
-                print("texto:",  m.group(2))  
-            m = re.search('(I|II)\s+\u2013\s+(.*)',t)
-            if(m is not None):
-                print("Alinea:", m.group(1))  
-                print("texto:",  m.group(2)) 
+            r = find_artigo(t, fn1)           
+            #if r is None:
+            #    print(t)
+    if teste:
+        fn1.close()
+            
+def read_input(file_name, encoding):
+    fn = open(file_name, 'r', encoding=encoding)
+    text = fn.read()
+    fn.close()
+    return text
 
+def open_output(file_name, encoding):
+    file_name = os.path.join("resultados", os.path.basename(file_name))
+    print(file_name)
+    fn = open(file_name, 'w', encoding=encoding)
+    return fn
+
+def find_artigo(text, fn = None):
+    m = re.search('^(Art.*\s+\d+(\u00B0|\.))\s+-*(.*)', text) 
+    if(m is not None):
+        if fn is None:
+            print("Artigo:", m.group(1), fn)
+            print("Texto:", m.group(3), fn)
+            #print("Achou",t)
+        else:
+            fn.write("Artigo: " + m.group(1) + "\n")
+            fn.write("Texto: " + m.group(3) + "\n")
+    else:
+        #print("Nao achou artigo")
+        return None
+    return 1
+
+def find_paragrafo(text):
+    m = re.search('(§ \d+)º\s+-\s+(.*)',text)
+    if(m is not None):
+        print("Paragrafo:", m.group(1))
+        print("Texto:", m.group(2))
+        #print("Achou",t) 
+    else:
+        print("Nao achou paragrafo")
+        return None
+    return 1
+
+def find_alinea(text):
+    m = re.search('(I|II)\s+\u2013\s+(.*)',text)
+    if(m is not None):
+        print("Alinea:", m.group(1))  
+        print("texto:",  m.group(2))
+    else:
+        print("Nao achou alinea")
+        return None
+    return 1
 
 if __name__ == "__main__":
     main()
