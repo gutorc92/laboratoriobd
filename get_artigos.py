@@ -11,10 +11,10 @@ def main():
         return None
     file_name = sys.argv[1]
     encoding = sys.argv[2]
-    teste = sys.argv[3]
+    output_file = sys.argv[3]
     print(file_name)
     text = read_input(file_name, encoding)
-    if teste:
+    if output_file:
         fn1 = open_output(file_name, encoding)
     soup = BeautifulSoup(text, 'html.parser')
     ps = soup.find_all('p')
@@ -25,12 +25,11 @@ def main():
         if t:
             t = str(t)
             t = t.strip()
-            #print("Linha: ", t)
             t = t.replace("\n", " ")
             r = find_artigo(t, fn1)           
-            #if r is None:
-            #    print(t)
-    if teste:
+            if r is None:
+                print(t.encode("iso-8859-1"))
+    if output_file:
         fn1.close()
             
 def read_input(file_name, encoding):
@@ -46,7 +45,7 @@ def open_output(file_name, encoding):
     return fn
 
 def find_artigo(text, fn = None):
-    m = re.search('^(Art.*\s+\d+(\u00B0|\.))\s+-*(.*)', text) 
+    m = re.search('^(Art.*\s+\d+(\u00B0|\.|o))\s+-*(.*)', text) 
     if(m is not None):
         if fn is None:
             print("Artigo:", m.group(1), fn)
@@ -56,7 +55,7 @@ def find_artigo(text, fn = None):
             fn.write("Artigo: " + m.group(1) + "\n")
             fn.write("Texto: " + m.group(3) + "\n")
     else:
-        #print("Nao achou artigo")
+        print("Nao achou artigo")
         return None
     return 1
 
