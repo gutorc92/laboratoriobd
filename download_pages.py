@@ -48,16 +48,47 @@ def save_file(html, nome_number):
     file_object.write(html)
     file_object.close()
 
-def main():
+def get_urls():
+    urls_todas = generate_link()
+    url_verdadeiras = []
+    headers = {'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.104 Safari/537.36'}
+    print("Comecando")
+    for url in urls_todas:
+        try:
+            #print(os.path.basename(url))
+            request = req.get(url, headers=headers, timeout=3)
+            if request.status_code == 200:
+                url_verdadeiras.append(url)
+                print('Web site exists ', url)
+            else:
+                print('Web site does not exist') 
+        except KeyboardInterrupt:
+            break;
+        except:
+                print('Web site does not exist ', url) 
+
+    return(url_verdadeiras)
+def webdriver_download():
     chrome_dir = os.path.dirname(os.path.realpath(__file__))
     chrome_path = os.path.join(chrome_dir, "chromedriver", "chromedriver")
     print(chrome_path,chrome_dir, os.path.realpath(__file__))
+    urls_verdadeiras = get_urls()
     driver = webdriver.Chrome(chrome_path)
-    driver.get("http://www.planalto.gov.br/ccivil_03/_ato2011-2014/2011/lei/L12586.htm")
-    driver.implicitly_wait(10)
-    save_file(driver.page_source, "teste1.html")
-    time.sleep(20)
+    for url in urls_verdadeiras:
+        try:
+            base_name = os.path.basename(url)
+            driver.get(url)
+            driver.implicitly_wait(10)
+            save_file(driver.page_source, base_name)
+            time.sleep(5)
+        except KeyboardInterrupt:
+            break;
+        except:
+            print("Url was not found ", url)
     driver.quit()
+
+def main():
+    webdriver_download()
 
 if __name__ == "__main__":
     main()
