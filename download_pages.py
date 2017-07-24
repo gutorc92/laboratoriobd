@@ -18,7 +18,16 @@ def generate_link():
                 urls.append(url.format(periodo = p, ano = year, lei=i))
     
     return urls
-        
+
+def save_urls():
+    urls = generate_link()
+    repositorio_dir = os.path.dirname(os.path.realpath(__file__))
+    file_name = os.path.join(repositorio_dir, "urls")
+    file_object = codecs.open(file_name, "w","utf-8")
+    for url in urls:
+        file_object.write(url+"\n")
+    file_object.close()
+
 
 def old_way():
     urls = generate_link()
@@ -68,6 +77,14 @@ def get_urls():
                 print('Web site does not exist ', url) 
 
     return(url_verdadeiras)
+
+def check_lei_already_downloaded(name):
+    leis_dir = os.path.dirname(os.path.realpath(__file__))
+    leis_dir = os.path.join(leis_dir, "leis")
+    file_name = os.path.join(leis_dir,name)
+    return os.path.isfile(file_name)
+
+
 def webdriver_download():
     chrome_dir = os.path.dirname(os.path.realpath(__file__))
     chrome_path = os.path.join(chrome_dir, "chromedriver", "chromedriver")
@@ -77,10 +94,11 @@ def webdriver_download():
     for url in urls_verdadeiras:
         try:
             base_name = os.path.basename(url)
-            driver.get(url)
-            driver.implicitly_wait(10)
-            save_file(driver.page_source, base_name)
-            time.sleep(5)
+            if not check_lei_already_downloaded(base_name):
+                driver.get(url)
+                driver.implicitly_wait(10)
+                save_file(driver.page_source, base_name)
+                time.sleep(5)
         except KeyboardInterrupt:
             break;
         except:
@@ -88,7 +106,8 @@ def webdriver_download():
     driver.quit()
 
 def main():
-    webdriver_download()
+    save_urls()
+    #webdriver_download()
 
 if __name__ == "__main__":
     main()
