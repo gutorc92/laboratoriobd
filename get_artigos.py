@@ -4,18 +4,13 @@ from bs4.element import NavigableString
 import re
 import sys
 import os
-
 def main():
-    if len(sys.argv) < 3:
-        print("Precisa de um arquivo")
-        return None
-    file_name = sys.argv[1]
-    encoding = sys.argv[2]
-    output_file = sys.argv[3]
-    print(file_name)
+    pass
+
+def separar_leis(file_name, encoding, output_file):
     text = read_input(file_name, encoding)
-    if output_file:
-        fn1 = open_output(file_name, encoding)
+    if output_file :
+        fn1 = open(output_file, "w", encoding=encoding)
     soup = BeautifulSoup(text, 'html.parser')
     ps = soup.find_all('p')
     print("Quantos ps foram encontrados: ", len(ps))
@@ -28,7 +23,7 @@ def main():
             t = t.replace("\n", " ")
             r = find_artigo(t, fn1)           
             if r is None:
-                print(t.encode("iso-8859-1"))
+                print(t)
     if output_file:
         fn1.close()
             
@@ -45,7 +40,7 @@ def open_output(file_name, encoding):
     return fn
 
 def find_artigo(text, fn = None):
-    m = re.search('^(Art.*\s+\d+(\u00B0|\.|o))\s+-*(.*)', text) 
+    m = re.search('^(Art.*\s+\d+(\u00B0|\.|o||º))\s+-*(.*)', text) 
     if(m is not None):
         if fn is None:
             print("Artigo:", m.group(1), fn)
@@ -53,7 +48,7 @@ def find_artigo(text, fn = None):
             #print("Achou",t)
         else:
             fn.write("Artigo: " + m.group(1) + "\n")
-            fn.write("Texto: " + m.group(3) + "\n")
+            fn.write("Texto: " + m.group(3).replace("  "," ") + "\n")
     else:
         print("Nao achou artigo")
         return None
