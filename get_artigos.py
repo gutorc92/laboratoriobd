@@ -25,13 +25,28 @@ def get_charset(arquivo):
         return None 
 
 def main():
-    print(get_charset(sys.argv[1]))
-    separar_leis(sys.argv[1], get_charset(sys.argv[1]), sys.argv[2], sys.argv[3])
+    #print(get_charset(sys.argv[1]))
+    output_file = None if sys.argv[2] == "None" else sys.argv[2]
+    output = True if sys.argv[3] == "True" else False
+    if output_file is None:
+        print("Certo")
+    else:
+        print(type(output_file))
+    if output is True:
+        print("Certo")
+    else:
+        print(type(output))
+
+    separar_leis(sys.argv[1], get_charset(sys.argv[1]), output_file, output)
 
 def separar_leis(file_name, encoding, output_file, output = False):
+    print("Encoding: ", encoding, " file: ", file_name)
     text = read_input(file_name, encoding)
-    if output_file :
+    if output_file is not None:
         fn1 = open(output_file, "w", encoding=encoding)
+    else:
+        print("Entrou aqui")
+        fn1 = None
     soup = BeautifulSoup(text, 'html.parser')
     ps = soup.find_all('p')
     if output is True:
@@ -62,11 +77,12 @@ def open_output(file_name, encoding):
     return fn
 
 def find_artigo(text, fn = None):
-    m = re.search('^(Art.*\s+\d+(\u00B0|\.|o||º))\s+-*(.*)', text) 
+    m = re.search('^(Art\.?\s+\d+(\u00B0|\.|o||º))\s+-*(.*)', text) 
     if(m is not None):
         if fn is None:
-            print("Artigo:", m.group(1), fn)
-            print("Texto:", m.group(3), fn)
+            print("Artigo:", m.group(1))
+            print("Sem sintido:", m.group(2))
+            print("Texto:", m.group(3))
             #print("Achou",t)
         else:
             fn.write("Artigo: " + m.group(1) + "\n")
