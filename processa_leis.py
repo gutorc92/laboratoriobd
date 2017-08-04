@@ -6,34 +6,8 @@ import sys
 import os
 from utils import *
 import filecmp
-from get_artigos import separar_leis
+from get_artigos import separar_leis, get_charset
 
-def outra():
-    if len(sys.argv) < 3:
-        print("Precisa de um arquivo")
-        return None
-    file_name = sys.argv[1]
-    encoding = sys.argv[2]
-    output_file = sys.argv[3]
-    print(file_name)
-    text = read_input(file_name, encoding)
-    if output_file:
-        fn1 = open_output(file_name, encoding)
-    soup = BeautifulSoup(text, 'html.parser')
-    ps = soup.find_all('p')
-    print("Quantos ps foram encontrados: ", len(ps))
-    for p in ps:
-        #print(type(p), p)
-        t = p.text
-        if t:
-            t = str(t)
-            t = t.strip()
-            t = t.replace("\n", " ")
-            r = find_artigo(t, fn1)           
-            if r is None:
-                print(t)
-    if output_file:
-        fn1.close()
             
 def verificar_output(correto, gerado):
     if not filecmp.cmp(correto, gerado):
@@ -49,8 +23,7 @@ def main():
         remove_file(output_file)
         correct_file = real_path_arquivos(leis_artigos_corretos(), lei)
         if os.path.isfile(html_file):
-            print(correct_file, html_file, output_file)
-            separar_leis(html_file, "utf-8", output_file)
+            separar_leis(html_file, get_charset(html_file), output_file)
             verificar_output(correct_file, output_file)
 
  

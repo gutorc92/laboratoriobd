@@ -4,16 +4,38 @@ from bs4.element import NavigableString
 import re
 import sys
 import os
-def main():
-    pass
+import subprocess
 
-def separar_leis(file_name, encoding, output_file):
+def get_charset(arquivo):
+    output = open("out_test","w+")
+    process = subprocess.Popen(["file","-i", arquivo],stdout=output) 
+    process.wait()
+    output.close()
+    output = open("out_test","r")
+    lines = output.read()
+    m = re.search("charset=(.*)", lines)
+    if m is not None:
+        charset =  m.group(1)
+        charset.strip()
+        output.close()
+        os.remove("out_test")
+        return charset
+    else:
+        output.close()
+        return None 
+
+def main():
+    print(get_charset(sys.argv[1]))
+    separar_leis(sys.argv[1], get_charset(sys.argv[1]), sys.argv[2], sys.argv[3])
+
+def separar_leis(file_name, encoding, output_file, output = False):
     text = read_input(file_name, encoding)
     if output_file :
         fn1 = open(output_file, "w", encoding=encoding)
     soup = BeautifulSoup(text, 'html.parser')
     ps = soup.find_all('p')
-    print("Quantos ps foram encontrados: ", len(ps))
+    if output is True:
+        print("Quantos ps foram encontrados: ", len(ps))
     for p in ps:
         #print(type(p), p)
         t = p.text
@@ -22,7 +44,7 @@ def separar_leis(file_name, encoding, output_file):
             t = t.strip()
             t = t.replace("\n", " ")
             r = find_artigo(t, fn1)           
-            if r is None:
+            if r is None and output is True:
                 print(t)
     if output_file:
         fn1.close()
@@ -50,7 +72,6 @@ def find_artigo(text, fn = None):
             fn.write("Artigo: " + m.group(1) + "\n")
             fn.write("Texto: " + m.group(3).replace("  "," ") + "\n")
     else:
-        print("Nao achou artigo")
         return None
     return 1
 
