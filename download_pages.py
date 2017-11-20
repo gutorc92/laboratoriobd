@@ -19,15 +19,53 @@ def generate_dic_leis():
              "2010": {"begin": 12188, "end": 12378, "period": "2007-2010"},
              "2009": {"begin": 11898, "end": 12187, "period": "2007-2010"},
              "2008": {"begin": 11639, "end": 11897, "period": "2007-2010"},
-             "2007": {"begin": 11441, "end": 11638, "period": "2007-2010"}}
+             "2007": {"begin": 11441, "end": 11638, "period": "2007-2010"},
+             "2006": {"begin": 11263, "end": 11440, "period": "2004-2016"},
+             "2005": {"begin": 11087, "end": 11262, "period": "2004-2016"},
+             "2004": {"begin": 10835, "end": 11086, "period": "2004-2016"},
+             "2003": {"begin": 10638, "end": 10834, "period": ""},
+             "2002": {"begin": 10401, "end": 10637, "period": ""},
+             "2001": {"begin": 10171, "end": 10400, "period": ""},
+             "2000": {"begin": 9953, "end": 10170, "period": ""},
+             "1999": {"begin": 9778, "end": 9952, "period": ""},
+             "1998": {"begin": 9600, "end": 9777, "period": ""},
+             "1997": {"begin": 9431, "end": 9599, "period": ""},
+             "1996": {"begin": 9254, "end": 9430, "period": ""},
+             "1995": {"begin": 8973, "end": 9253, "period": ""},
+             "1994": {"begin": 8842, "end": 8972, "period": ""},
+             "1993": {"begin": 8617, "end": 8841, "period": ""},
+             "1992": {"begin": 8395, "end": 8616, "period": "1989_1994"},
+             "1991": {"begin": 8157, "end": 8394, "period": "1989_1994"},
+             "1990": {"begin": 7991, "end": 8156, "period": "1989_1994"},
+             "1989": {"begin": 7715, "end": 7990, "period": "1989_1994"},
+             "1988": {"begin": 7647, "end": 7714, "period": "1980-1988"},
+             "1987": {"begin": 6896, "end": 7646, "period": "1980-1988"}}
     return years
+
 def generate_link():
     urls = []
-    url = "http://www.planalto.gov.br/ccivil_03/_ato{periodo}/{ano}/lei/L{lei}.htm"
     years = generate_dic_leis()
     for year in years:
-        for i in range(years[year]["begin"], years[year]["end"] ):
-            urls.append(url.format(periodo = years[year]["period"], ano = year, lei=i))
+        for i in range(years[year]["begin"], years[year]["end"] + 1 ):
+            year_n = int(year)
+            if year_n >= 2006 and year_n <= 2017:
+                url = "http://www.planalto.gov.br/ccivil_03/_ato{periodo}/{ano}/lei/L{lei}.htm"  # 2007  a 2017
+                urls.append(url.format(periodo=years[year]["period"], ano=year, lei=i))
+            if year_n >= 2004 and year_n <= 2016:
+                url = "http://www.planalto.gov.br/ccivil_03/_Ato{periodo}/{ano}/Lei/L{lei}.htm"  # 2004 a 2006
+                urls.append(url.format(periodo=years[year]["period"], ano=year, lei=i))
+            if year_n >= 2002 and year_n <= 2013:
+                url = "http://www.planalto.gov.br/ccivil_03/Leis/{ano}/L{lei}.htm"  # 2002 a 2003
+                urls.append(url.format(ano=year, lei=i))
+            if year_n == 2001:
+                url = "http://www.planalto.gov.br/ccivil_03/Leis/LEIS_{ano}/L{lei}.htm"  # 2001
+                urls.append(url.format(ano=year, lei=i))
+            if year_n >= 1993 and year_n <= 2000:
+                url = "http://www.planalto.gov.br/ccivil_03/Leis/L{lei}.htm"  # 1993 a 2000
+                urls.append(url.format(lei=i))
+            if year_n >= 1981 and year_n <= 1992:
+                url = "http://www.planalto.gov.br/ccivil_03/Leis/{periodo}/l{lei}.htm"  # 1981 a 1992
+                urls.append(url.format(periodo = years[year]["period"], lei=i))
     
     return urls
         
@@ -65,6 +103,7 @@ def main():
                 save_law(os.path.join(s.path, filename), div.text )
         except:
             print("Lei not found", url)
+            logging.exception("Exception ocorrur")
 
 
 if __name__ == "__main__":
