@@ -22,25 +22,18 @@ class Settings(object):
         self.settings_values = {"path": "required"}
 
     def find_settings_file(self):
-        uritools_dir = os.path.dirname(os.path.realpath(__file__))
-        file_settings = os.path.join(uritools_dir, self.FILE_SETTINGS)
-        if os.path.isfile(file_settings):
-            return file_settings
-        uritools_dir = os.path.expanduser("~")
-        file_settings = os.path.join(uritools_dir, self.FILE_SETTINGS)
-        if os.path.isfile(file_settings):
-            return file_settings
-        file_settings = os.path.join(uritools_dir, "..", self.FILE_SETTINGS)
-        if os.path.isfile(file_settings):
-            return file_settings
-        file_settings = os.path.join(os.getcwd(), self.FILE_SETTINGS)
-        if os.path.isfile(file_settings):
-            return file_settings
-        file_settings = os.path.join(os.getcwd(), "..", self.FILE_SETTINGS)
-        if os.path.isfile(file_settings):
-            return file_settings
-        else:
-            return None
+        search_paths = [
+            os.path.join(os.path.dirname(os.path.realpath(__file__)), self.FILE_SETTINGS),
+            os.path.join(os.path.expanduser("~"), self.FILE_SETTINGS),
+            os.path.join(os.path.expanduser("~"), "..", self.FILE_SETTINGS),
+            os.path.join(os.getcwd(), self.FILE_SETTINGS),
+            os.path.join(os.getcwd(), "..", self.FILE_SETTINGS)
+        ]
+        settings_path = None
+        for file_path in search_paths:
+            if os.path.exists(file_path):
+                settings_path = file_path
+        return settings_path
 
 
     def get_setting(self, setting, line):
@@ -65,6 +58,10 @@ class Settings(object):
                 raise MissingValueRequired("Setting %s not found on file %s" % (setting, self.file_path))
             self.__dict__[setting] = found
 
-
+    def join(self, path, *args):
+        path_all = os.path.join(self.path, path)
+        for p in list(args):
+            path_all = os.path.join(path_all, p)
+        return path_all
 
 
