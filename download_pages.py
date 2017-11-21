@@ -48,13 +48,13 @@ def generate_link():
     for year in years:
         for i in range(years[year]["begin"], years[year]["end"] + 1 ):
             year_n = int(year)
-            if year_n >= 2006 and year_n <= 2017:
+            if year_n > 2006 and year_n <= 2017:
                 url = "http://www.planalto.gov.br/ccivil_03/_ato{periodo}/{ano}/lei/L{lei}.htm"  # 2007  a 2017
                 urls.append(url.format(periodo=years[year]["period"], ano=year, lei=i))
-            if year_n >= 2004 and year_n <= 2016:
+            if year_n >= 2004 and year_n <= 2006:
                 url = "http://www.planalto.gov.br/ccivil_03/_Ato{periodo}/{ano}/Lei/L{lei}.htm"  # 2004 a 2006
                 urls.append(url.format(periodo=years[year]["period"], ano=year, lei=i))
-            if year_n >= 2002 and year_n <= 2013:
+            if year_n >= 2002 and year_n <= 2003:
                 url = "http://www.planalto.gov.br/ccivil_03/Leis/{ano}/L{lei}.htm"  # 2002 a 2003
                 urls.append(url.format(ano=year, lei=i))
             if year_n == 2001:
