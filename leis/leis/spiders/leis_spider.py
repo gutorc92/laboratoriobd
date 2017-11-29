@@ -43,11 +43,13 @@ class LeisItem(scrapy.Spider):
                 if url:
                     item = Law()
                     item["url"] = url
-                    item["number"] = os.path.splitext(os.path.basename(url))
-                    yield Request(url=url, callback=self.parse_page_year, meta={'item': item})
+                    item["number"] = os.path.splitext(os.path.basename(url))[0]
+                    yield Request(url=url, callback=self.parse_page_law, meta={'item': item})
 
     def parse_page_law(self, response):
         item = response.meta['item']
-        law = response.xpath("//body").extract()
+        print(item)
+        law = response.xpath("//body//text()").extract()
         with codecs.open(os.path.join("C:\\Users\\b15599226\Documents\\teste", item["number"]), "w", "utf-8") as handle:
-            handle.write(law)
+            for line in law:
+                handle.write(line)
