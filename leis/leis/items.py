@@ -7,13 +7,15 @@
 
 import scrapy
 
-
-class LeisItem(scrapy.Item):
+class YearPublication(scrapy.Item):
     # define the fields for your item here like:
-    name = 'leis'
-    start_urls = [
-            'http://www4.planalto.gov.br/legislacao/portal-legis/legislacao-1/leis-ordinarias'
-            ]
+    year = scrapy.Field()
+    url = scrapy.Field()
 
-    def parse(self, response):
-        a = response.xpath("//*[@id='parent-fieldname-text']/table/tbody/tr/th/a/@href | //*[@id='parent-fieldname-text']/table/tbody/tr/th/strong/a/@href").extract()
+class Law(scrapy.Item):
+    number = scrapy.Field()
+    url = scrapy.Field()
+
+
+class LeisItem(scrapy.Spider):
+    pass
