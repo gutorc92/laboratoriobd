@@ -8,7 +8,7 @@
 import scrapy
 import os
 import codecs
-from leis.items import YearPublication, Law
+from leis.items import YearPublication, Law, LawText
 from scrapy.spiders import Spider
 from scrapy.http import Request
 
@@ -34,8 +34,8 @@ class LeisItem(scrapy.Spider):
                          yield Request(url=url, callback=self.parse_page_year, meta={'item': item})
 
     def parse_page_year(self, response):
-        item = response.meta['item']
-        print(item)
+        item_year = response.meta['item']
+        print(item_year)
         links = response.xpath("//*[@id='visao2']/table/tr/td/a")
         if links:
             for l in links:
@@ -44,12 +44,17 @@ class LeisItem(scrapy.Spider):
                     item = Law()
                     item["url"] = url
                     item["number"] = os.path.splitext(os.path.basename(url))[0]
+                    item["year"] = item_year["year"]
                     yield Request(url=url, callback=self.parse_page_law, meta={'item': item})
 
     def parse_page_law(self, response):
-        item = response.meta['item']
-        print(item)
+        item_law = response.meta['item']
+        print(item_law)
         law = response.xpath("//body//text()").extract()
-        with codecs.open(os.path.join("C:\\Users\\b15599226\Documents\\teste", item["number"]), "w", "utf-8") as handle:
-            for line in law:
-                handle.write(line)
+        if law:
+            item = LawText()
+            item["url"] = item_law["url"]
+            item["text"] = law
+            item["number"] = item_law["number"]
+            item["year"] = item_law["year"]
+            return item

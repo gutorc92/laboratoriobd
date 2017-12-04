@@ -15,7 +15,10 @@ class YearPublication(scrapy.Item):
 class Law(scrapy.Item):
     number = scrapy.Field()
     url = scrapy.Field()
+    year = scrapy.Field()
 
-
-class LeisItem(scrapy.Spider):
-    pass
+class LawText(scrapy.Item):
+    number = scrapy.Field()
+    url = scrapy.Field()
+    text = scrapy.Field()
+    year = scrapy.Field()
