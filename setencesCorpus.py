@@ -39,6 +39,8 @@ class ReadSentences(object):
         with codecs.open(os.path.join(self.s.path, "leis", file), "r", "UTF-8") as handle:
            for line in handle.readlines():
                line = line.rstrip().lower()
+               line = re.sub("[0-9]+", "", line)
+               line = re.sub("[_]+", "", line)
                text += " " + line
         line = re.sub("\s+", " ", text)
         return text
@@ -86,7 +88,8 @@ class ReadSentences(object):
 if __name__ == "__main__":
     r = ReadSentences()
     p = r.tdm()
-    p.to_csv(os.path.join(r.s.path, "tabela.csv"))
-    print(p)
+    print(p.shape)
+    p.to_csv(os.path.join(r.s.path, "tabela2.csv"))
+
     #print(stopwords.words("portuguese"))
 
