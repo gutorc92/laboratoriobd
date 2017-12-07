@@ -11,6 +11,8 @@ from settings import Settings
 from datetime import datetime
 import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
+import numpy as np
+import lda
 
 
 class ReadSentences(object):
@@ -89,7 +91,17 @@ if __name__ == "__main__":
     r = ReadSentences()
     p = r.tdm()
     print(p.shape)
-    p.to_csv(os.path.join(r.s.path, "tabela2.csv"))
+    vocab = p.index.values
+    print(vocab[2:20])
+    p.reset_index(drop=True)
+    model = lda.LDA(n_topics=20, n_iter=1500, random_state=1)
+    model.fit(p.as_matrix())
+    topic_word = model.topic_word_
+    n_top_words = 8
+    for i, topic_dist in enumerate(topic_word):
+        topic_words = np.array(vocab)[np.argsort(topic_dist)][:-(n_top_words + 1):-1]
+        print('Topic {}: {}'.format(i, ' '.join(topic_words)))
+    #p.to_csv(os.path.join(r.s.path, "tabela2.csv"))
 
     #print(stopwords.words("portuguese"))
 
